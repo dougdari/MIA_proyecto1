@@ -1,9 +1,15 @@
 %{
 
-    #include <iostream>
+    
     #include "sintactico.h"
+    #include <iostream>
 
     int columna = 0;
+
+    /*
+    
+
+    */
 }%
 
 %option noyywrap caseless
@@ -41,31 +47,48 @@ exec      "EXEC"
 pause       "PAUSE"
 
 rep         "REP"
-size        "-size"
-path        "-path"
-name        "-name"
-id          "-id"
-usuario     "-usuario"
-password    "-password"
 
-pwd         "-pwd"
+fit         "fit"
 
-grp         "-grp"
-ugo         "-ugo"
-filen       "-file"[0-9]+
-cont        "-cont"
-contenido   "-contenido"
-destino     "-destino"
-unit        "-unit"
-type        "-type"
-delete      "-delete"
-add         "-add"
-fs          "-fs"
-r           "-r"
-p           "-p"
-fit         "-fit"
-ruta        "-ruta"
+name        "name"
+path        "path"
+ruta        "ruta"
+size        "size"
 
+
+id          "id"
+usuario     "user"
+
+grp         "grp"
+password    "pass"
+
+
+
+ugo         "ugo"
+
+filen       "file"[0-9]+
+
+cont        "cont"
+
+
+unit        "unit"
+type        "type"
+pwd         "pwd"
+    contenido   "contenido"
+    destino     "destino"
+
+delete      "delete"
+
+add         "add"
+
+fs          "fs"
+r           "r"
+p           "p"
+
+
+
+
+flechaParametro [>]
 entero              [0-9]+
 cadena              [\"][^\"\n]*[\"]
 identificador       [0-9]{3}[Aa-zZ]
@@ -77,9 +100,12 @@ comentarioLinea     (#.*\n?)
 
 %%
 
+{flechaParametro} {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_FLECHA_PARAMETRO;}
 {entero}       {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_ENTERO;}
 {cadena}     {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_CADENA;} 
+
 {rutaParametro} {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_RUTA_PARAMETRO;}
+
 {asignacion}    {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_ASIGNACION;}
 {comentarioLinea} {}
 {identificador} {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_IDENTIFICADOR;}
@@ -99,6 +125,7 @@ comentarioLinea     (#.*\n?)
 {cat}       {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_CAT;}
 {mkusr}     {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_MKUSR;}
 {mkdir}     {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_MKDIR;}
+
 {rmusr}     {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_RMUSR;}
 {chmod}     {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_CHMOD;}
 {mkfile}    {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_MKFILE;}
@@ -109,11 +136,13 @@ comentarioLinea     (#.*\n?)
 {move}      {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_MOVE;}
 {find}      {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_FIND;}
 {chown}     {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_CHOWN;}
+
 {chgrp}     {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_CHGRP;}
 {recovery}  {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_RECOVERY;}
 {loss}      {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_LOSS;}
 {exec}      {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_EXEC;}
 {rep}       {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_REP;}
+
 {size}      {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_SIZE;}
 {path}      {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_PATH;}
 {name}      {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_NAME;}
@@ -142,7 +171,7 @@ comentarioLinea     (#.*\n?)
 "K"         {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_KB;}
 "M"         {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_MB;}
 "B"         {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_BYTES;}
-{ruta_r}    {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_RUTA_R;}
+
 "P"         {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_PRIMARIA;}
 "E"         {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_EXTENDIDA;}
 "L"         {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_LOGICA;}
@@ -152,6 +181,8 @@ comentarioLinea     (#.*\n?)
 "3FS"       {columna = columna + strlen(yylval.entrada); strcpy(yylval.entrada, yytext); return TOKEN_EXTEN3;}
 "\n"		{ }
 [[:blank:]]	{ }
+
+
 .           {std::cout<<yytext<<"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ERROR LEXICO @@@@@@@@@@@@@@@@@@@@@@"<< std::endl;}
 
 %%
